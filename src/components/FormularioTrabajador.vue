@@ -65,12 +65,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="foto" class="form-label">Foto:</label>
-                    <input type="file" id="foto" @change="handleFileUpload" class="form-control" />
+                    <input type="file" id="foto" @change="handleFileUpload" ref="fotoInput" class="form-control" />
                 </div>
 
                 <!-- Campos dinámicos para puestos laborales -->
                 <div v-for="(puesto, index) in formData.puesto_laboral" :key="index" class="mb-3">
-                    <label :for="'puesto_laboral_' + index" class="form-label">Puestos Laborales {{ index + 1 }}:</label>
+                    <label :for="'puesto_laboral_' + index" class="form-label">Puestos Laborales {{ index + 1
+                        }}:</label>
                     <select :id="'puesto_laboral_' + index" v-model="formData.puesto_laboral[index]" class="form-select"
                         required>
                         <option disabled value="">Seleccione un puesto</option>
@@ -82,11 +83,13 @@
 
                 <!-- Botón para agregar un nuevo puesto -->
                 <div class="mb-3">
-                    <button @click="agregarSelectPuesto" type="button" class="btn btn-info w-100">Agregar Nuevo Puesto</button>
+                    <button @click="agregarSelectPuesto" type="button" class="btn btn-info w-100">Agregar Nuevo
+                        Puesto</button>
                 </div>
 
                 <!-- Botones de acción -->
-                <button type="submit" class="btn btn-success w-100 mt-3">{{ isEditing ? "Actualizar" : "Crear" }}</button>
+                <button type="submit" class="btn btn-success w-100 mt-3">{{ isEditing ? "Actualizar" : "Crear"
+                    }}</button>
                 <button @click="cancelar" type="button" class="btn btn-secondary w-100 mt-2">Cancelar</button>
             </form>
         </div>
@@ -177,6 +180,12 @@ export default {
                 puesto_laboral: [""],
                 foto: null,
             };
+            this.limpiarInputArchivo();
+        },
+        limpiarInputArchivo() {
+            if (this.$refs.fotoInput) {
+                this.$refs.fotoInput.value = null;
+            }
         },
         logout() {
             Swal.fire({
@@ -249,6 +258,8 @@ export default {
                     title: "Error",
                     text: "Hubo un problema al guardar los datos. Por favor, inténtalo de nuevo.",
                 });
+            } finally {
+                this.limpiarInputArchivo();
             }
         },
     },
