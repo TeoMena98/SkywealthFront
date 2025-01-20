@@ -28,19 +28,22 @@
 </template>
 
 <script>
+import { ref } from 'vue';
 import axios from '../axios';
+import { useRouter } from 'vue-router';
 
 export default {
-    data() {
-        return {
-            email: '',
-            password: '',
-            errorMessage: ''
-        };
-    },
-    methods: {
-        login() {
-            axios.post('/login', { email: this.email, password: this.password })
+    setup() {
+        // Declaración de las propiedades reactivas
+        const email = ref('');
+        const password = ref('');
+        const errorMessage = ref('');
+
+        const router = useRouter();
+
+        // Método de login
+        const login = () => {
+            axios.post('/login', { email: email.value, password: password.value })
                 .then(response => {
                     // Guardamos el token JWT en el almacenamiento local
                     localStorage.setItem('token', response.data.token);
@@ -48,18 +51,26 @@ export default {
                     localStorage.setItem('usuario_nombre', response.data.usuario_nombre);
 
                     // Redirigir a la página principal o dashboard
-                    this.$router.push('/trabajadores');
+                    router.push('/trabajadores');
                 })
                 .catch(error => {
                     // Mostrar mensaje de error si el login falla
                     if (error.response && error.response.data) {
                         console.log(error.response.data);
-                        this.errorMessage = error.response.data.error || 'Error de autenticación';
+                        errorMessage.value = error.response.data.error || 'Error de autenticación';
                     } else {
-                        this.errorMessage = 'Error desconocido';
+                        errorMessage.value = 'Error desconocido';
                     }
                 });
-        }
+        };
+
+        // Retornar las propiedades y funciones a la plantilla
+        return {
+            email,
+            password,
+            errorMessage,
+            login
+        };
     }
 };
 </script>
